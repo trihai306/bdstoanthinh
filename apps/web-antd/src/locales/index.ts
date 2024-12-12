@@ -23,9 +23,10 @@ const localesMap = loadLocalesMapFromDir(
   /\.\/langs\/([^/]+)\/(.*)\.json$/,
   modules,
 );
+
 /**
- * 加载应用特有的语言包
- * 这里也可以改造为从服务端获取翻译数据
+ * Tải gói ngôn ngữ đặc biệt của ứng dụng
+ * Có thể cải tiến để lấy dữ liệu dịch từ phía server
  * @param lang
  */
 async function loadMessages(lang: SupportedLanguagesType) {
@@ -37,7 +38,7 @@ async function loadMessages(lang: SupportedLanguagesType) {
 }
 
 /**
- * 加载第三方组件库的语言包
+ * Tải gói ngôn ngữ của thư viện thành phần bên thứ ba
  * @param lang
  */
 async function loadThirdPartyMessage(lang: SupportedLanguagesType) {
@@ -45,7 +46,7 @@ async function loadThirdPartyMessage(lang: SupportedLanguagesType) {
 }
 
 /**
- * 加载dayjs的语言包
+ * Tải gói ngôn ngữ của dayjs
  * @param lang
  */
 async function loadDayjsLocale(lang: SupportedLanguagesType) {
@@ -55,11 +56,15 @@ async function loadDayjsLocale(lang: SupportedLanguagesType) {
       locale = await import('dayjs/locale/en');
       break;
     }
+    case 'vi-VN': {
+      locale = await import('dayjs/locale/vi');
+      break;
+    }
     case 'zh-CN': {
       locale = await import('dayjs/locale/zh-cn');
       break;
     }
-    // 默认使用英语
+    // Mặc định sử dụng tiếng Anh
     default: {
       locale = await import('dayjs/locale/en');
     }
@@ -67,18 +72,23 @@ async function loadDayjsLocale(lang: SupportedLanguagesType) {
   if (locale) {
     dayjs.locale(locale);
   } else {
-    console.error(`Failed to load dayjs locale for ${lang}`);
+    console.error(`Không thể tải ngôn ngữ dayjs cho ${lang}`);
   }
 }
 
 /**
- * 加载antd的语言包
+ * Tải gói ngôn ngữ antd
  * @param lang
  */
 async function loadAntdLocale(lang: SupportedLanguagesType) {
   switch (lang) {
     case 'en-US': {
       antdLocale.value = antdEnLocale;
+      break;
+    }
+    case 'vi-VN': {
+      const antdViLocale = await import('ant-design-vue/es/locale/vi_VN');
+      antdLocale.value = antdViLocale.default;
       break;
     }
     case 'zh-CN': {

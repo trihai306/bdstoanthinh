@@ -8,30 +8,30 @@ const dynamicRouteFiles = import.meta.glob('./modules/**/*.ts', {
   eager: true,
 });
 
-// 有需要可以自行打开注释，并创建文件夹
+// Nếu cần, có thể mở chú thích và tạo thư mục
 // const externalRouteFiles = import.meta.glob('./external/**/*.ts', { eager: true });
 // const staticRouteFiles = import.meta.glob('./static/**/*.ts', { eager: true });
 
-/** 动态路由 */
+/** Định tuyến động */
 const dynamicRoutes: RouteRecordRaw[] = mergeRouteModules(dynamicRouteFiles);
 
-/** 外部路由列表，访问这些页面可以不需要Layout，可能用于内嵌在别的系统(不会显示在菜单中) */
+/** Danh sách định tuyến bên ngoài, những trang này có thể không cần Layout, có thể được nhúng vào hệ thống khác (không hiển thị trong menu) */
 // const externalRoutes: RouteRecordRaw[] = mergeRouteModules(externalRouteFiles);
 // const staticRoutes: RouteRecordRaw[] = mergeRouteModules(staticRouteFiles);
 const staticRoutes: RouteRecordRaw[] = [];
 const externalRoutes: RouteRecordRaw[] = [];
 
-/** 路由列表，由基本路由、外部路由和404兜底路由组成
- *  无需走权限验证（会一直显示在菜单中） */
+/** Danh sách các định tuyến, bao gồm các định tuyến cơ bản, định tuyến bên ngoài và định tuyến 404 dự phòng
+ *  Không cần kiểm tra quyền (sẽ luôn hiển thị trong menu) */
 const routes: RouteRecordRaw[] = [
   ...coreRoutes,
   ...externalRoutes,
   fallbackNotFoundRoute,
 ];
 
-/** 基本路由列表，这些路由不需要进入权限拦截 */
+/** Danh sách các định tuyến cơ bản, những định tuyến này không cần vào kiểm tra quyền */
 const coreRouteNames = traverseTreeValues(coreRoutes, (route) => route.name);
 
-/** 有权限校验的路由列表，包含动态路由和静态路由 */
+/** Danh sách các định tuyến có kiểm tra quyền, bao gồm các định tuyến động và tĩnh */
 const accessRoutes = [...dynamicRoutes, ...staticRoutes];
 export { accessRoutes, coreRouteNames, routes };

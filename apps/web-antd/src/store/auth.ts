@@ -20,25 +20,25 @@ export const useAuthStore = defineStore('auth', () => {
   const loginLoading = ref(false);
 
   /**
-   * 异步处理登录操作
+   * Xử lý đăng nhập bất đồng bộ
    * Asynchronously handle the login process
-   * @param params 登录表单数据
+   * @param params Dữ liệu từ biểu mẫu đăng nhập
    */
   async function authLogin(
     params: Recordable<any>,
     onSuccess?: () => Promise<void> | void,
   ) {
-    // 异步处理用户登录操作并获取 accessToken
+    // Xử lý đăng nhập người dùng và lấy accessToken
     let userInfo: null | UserInfo = null;
     try {
       loginLoading.value = true;
       const { accessToken } = await loginApi(params);
 
-      // 如果成功获取到 accessToken
+      // Nếu lấy được accessToken thành công
       if (accessToken) {
         accessStore.setAccessToken(accessToken);
 
-        // 获取用户信息并存储到 accessStore 中
+        // Lấy thông tin người dùng và lưu vào accessStore
         const [fetchUserInfoResult, accessCodes] = await Promise.all([
           fetchUserInfo(),
           getAccessCodesApi(),
@@ -78,12 +78,12 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       await logoutApi();
     } catch {
-      // 不做任何处理
+      // Không làm gì cả
     }
     resetAllStores();
     accessStore.setLoginExpired(false);
 
-    // 回登录页带上当前路由地址
+    // Quay lại trang đăng nhập và mang theo địa chỉ URL hiện tại
     await router.replace({
       path: LOGIN_PATH,
       query: redirect

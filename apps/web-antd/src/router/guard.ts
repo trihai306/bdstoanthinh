@@ -11,17 +11,17 @@ import { useAuthStore } from '#/store';
 import { generateAccess } from './access';
 
 /**
- * 通用守卫配置
+ * Cấu hình bảo vệ chung
  * @param router
  */
 function setupCommonGuard(router: Router) {
-  // 记录已经加载的页面
+  // Ghi lại các trang đã tải
   const loadedPaths = new Set<string>();
 
   router.beforeEach(async (to) => {
     to.meta.loaded = loadedPaths.has(to.path);
 
-    // 页面加载进度条
+    // Thanh tiến trình tải trang
     if (!to.meta.loaded && preferences.transition.progress) {
       startProgress();
     }
@@ -29,11 +29,11 @@ function setupCommonGuard(router: Router) {
   });
 
   router.afterEach((to) => {
-    // 记录页面是否加载,如果已经加载，后续的页面切换动画等效果不在重复执行
+    // Ghi lại trang đã tải, nếu đã tải, các hiệu ứng chuyển trang sau đó sẽ không lặp lại
 
     loadedPaths.add(to.path);
 
-    // 关闭页面加载进度条
+    // Đóng thanh tiến trình tải trang
     if (preferences.transition.progress) {
       stopProgress();
     }
@@ -41,7 +41,7 @@ function setupCommonGuard(router: Router) {
 }
 
 /**
- * 权限访问守卫配置
+ * Cấu hình bảo vệ truy cập
  * @param router
  */
 function setupAccessGuard(router: Router) {
@@ -50,7 +50,7 @@ function setupAccessGuard(router: Router) {
     const userStore = useUserStore();
     const authStore = useAuthStore();
 
-    // 基本路由，这些路由不需要进入权限拦截
+    // Các tuyến cơ bản, các tuyến này không cần kiểm tra quyền truy cập
     if (coreRouteNames.includes(to.name as string)) {
       if (to.path === LOGIN_PATH && accessStore.accessToken) {
         return decodeURIComponent(
@@ -60,45 +60,45 @@ function setupAccessGuard(router: Router) {
       return true;
     }
 
-    // accessToken 检查
+    // Kiểm tra accessToken
     if (!accessStore.accessToken) {
-      // 明确声明忽略权限访问权限，则可以访问
+      // Rõ ràng tuyên bố bỏ qua quyền truy cập, thì có thể truy cập
       if (to.meta.ignoreAccess) {
         return true;
       }
 
-      // 没有访问权限，跳转登录页面
+      // Không có quyền truy cập, chuyển đến trang đăng nhập
       if (to.fullPath !== LOGIN_PATH) {
         return {
           path: LOGIN_PATH,
-          // 如不需要，直接删除 query
+          // Nếu không cần, xóa trực tiếp query
           query: { redirect: encodeURIComponent(to.fullPath) },
-          // 携带当前跳转的页面，登录后重新跳转该页面
+          // Mang theo trang hiện tại, sau khi đăng nhập sẽ chuyển lại trang này
           replace: true,
         };
       }
       return to;
     }
 
-    // 是否已经生成过动态路由
+    // Đã tạo tuyến động chưa
     if (accessStore.isAccessChecked) {
       return true;
     }
 
-    // 生成路由表
-    // 当前登录用户拥有的角色标识列表
+    // Tạo bảng tuyến
+    // Danh sách các vai trò của người dùng hiện tại
     const userInfo = userStore.userInfo || (await authStore.fetchUserInfo());
     const userRoles = userInfo.roles ?? [];
 
-    // 生成菜单和路由
+    // Tạo menu và tuyến
     const { accessibleMenus, accessibleRoutes } = await generateAccess({
       roles: userRoles,
       router,
-      // 则会在菜单中显示，但是访问会被重定向到403
+      // Sẽ hiển thị trong menu, nhưng truy cập sẽ bị chuyển hướng đến 403
       routes: accessRoutes,
     });
 
-    // 保存菜单信息和路由信息
+    // Lưu thông tin menu và tuyến
     accessStore.setAccessMenus(accessibleMenus);
     accessStore.setAccessRoutes(accessibleRoutes);
     accessStore.setIsAccessChecked(true);
@@ -112,13 +112,13 @@ function setupAccessGuard(router: Router) {
 }
 
 /**
- * 项目守卫配置
+ * Cấu hình bảo vệ dự án
  * @param router
  */
 function createRouterGuard(router: Router) {
-  /** 通用 */
+  /** Chung */
   setupCommonGuard(router);
-  /** 权限访问 */
+  /** Truy cập quyền */
   setupAccessGuard(router);
 }
 

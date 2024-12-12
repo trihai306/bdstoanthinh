@@ -15,24 +15,24 @@ import App from './app.vue';
 import { router } from './router';
 
 async function bootstrap(namespace: string) {
-  // 初始化组件适配器
+  // Khởi tạo bộ điều hợp thành phần
   await initComponentAdapter();
 
   const app = createApp(App);
 
-  // 国际化 i18n 配置
+  // Cấu hình quốc tế hóa i18n
   await setupI18n(app);
 
-  // 配置 pinia-tore
+  // Cấu hình pinia-store
   await initStores(app, { namespace });
 
-  // 安装权限指令
+  // Cài đặt chỉ thị quyền truy cập
   registerAccessDirective(app);
 
-  // 配置路由及路由守卫
+  // Cấu hình định tuyến và bảo vệ định tuyến
   app.use(router);
 
-  // 动态更新标题
+  // Cập nhật tiêu đề động
   watchEffect(() => {
     if (preferences.app.dynamicTitle) {
       const routeTitle = router.currentRoute.value.meta?.title;
