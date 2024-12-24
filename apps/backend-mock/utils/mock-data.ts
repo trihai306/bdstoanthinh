@@ -76,6 +76,22 @@ const dashboardMenus = [
           title: 'page.dashboard.workspace',
         },
       },
+      {
+        name: 'ListRealEstate',
+        path: '/list-real-estate',
+        component: '/dashboard/list-real-estate/index',
+        meta: {
+          title: 'page.dashboard.listRealEstate',
+        },
+      },
+      {
+        name: 'PropertyDetails',
+        path: '/property-details',
+        component: '/dashboard/property-details/index',
+        meta: {
+          title: 'Thông tin chi tiết tài sản',
+        },
+      },
     ],
   },
 ];
