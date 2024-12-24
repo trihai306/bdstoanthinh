@@ -33,6 +33,24 @@ const routes: RouteRecordRaw[] = [
           title: $t('page.dashboard.workspace'),
         },
       },
+      {
+        name: 'ListRealEstate',
+        path: '/list-real-estate',
+        component: () => import('#/views/dashboard/list-real-estate/index.vue'),
+        meta: {
+          icon: 'lucide:building',
+          title: 'Danh sách bất động sản',
+        },
+      },
+      {
+        name: 'PropertyDetails',
+        path: '/property-details',
+        component: () => import('#/views/dashboard/property-details/index.vue'),
+        meta: {
+          icon: 'lucide:building',
+          title: 'Thông tin chi tiết tài sản',
+        },
+      },
     ],
   },
 ];
