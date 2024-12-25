@@ -26,6 +26,7 @@ type TableDynamic = {
   hidden?: boolean; // Ẩn trường trong form
   dependencies?: string[];
   isEditable?: boolean;
+  render?: (opt: { text: any; record: any }) => any;
 };
 
 // Thêm DefaultRecordType để có thể sử dụng render

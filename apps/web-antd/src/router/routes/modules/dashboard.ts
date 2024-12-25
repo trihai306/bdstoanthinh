@@ -60,6 +60,15 @@ const routes: RouteRecordRaw[] = [
           title: 'Danh sách người bán',
         },
       },
+      {
+        name: 'ListWebsite',
+        path: '/list-website',
+        component: () => import('#/views/dashboard/list-website/index.vue'),
+        meta: {
+          icon: 'lucide:building',
+          title: 'Danh sách website',
+        },
+      },
     ],
   },
 ];

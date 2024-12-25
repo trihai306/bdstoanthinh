@@ -6,7 +6,7 @@ import type {
   WorkbenchTrendItem,
 } from '@vben/common-ui';
 
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import {
@@ -22,6 +22,7 @@ import { useUserStore } from '@vben/stores';
 import { openWindow } from '@vben/utils';
 
 import AnalyticsVisitsSource from '../analytics/analytics-visits-source.vue';
+import { mockSellers } from '#/mocdata';
 
 const userStore = useUserStore();
 
@@ -231,6 +232,16 @@ function navTo(nav: WorkbenchProjectItem | WorkbenchQuickNavItem) {
     console.warn(`Unknown URL for navigation item: ${nav.title} -> ${nav.url}`);
   }
 }
+
+const sellerInfo = ref<any>(null);
+
+onMounted(() => {
+  const sellerId = router.currentRoute.value.query.sellerId as string;
+  if (sellerId) {
+    sellerInfo.value = mockSellers.find((seller) => seller.id === sellerId);
+  }
+});
+
 </script>
 
 <template>
@@ -239,7 +250,7 @@ function navTo(nav: WorkbenchProjectItem | WorkbenchQuickNavItem) {
       :avatar="userStore.userInfo?.avatar || preferences.app.defaultAvatar"
     >
       <template #title>
-        早安, {{ userStore.userInfo?.realName }}, 开始您一天的工作吧！
+        {{ sellerInfo?.name }}
       </template>
       <template #description> 今日晴，20℃ - 32℃！ </template>
     </WorkbenchHeader>

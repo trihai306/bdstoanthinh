@@ -100,6 +100,14 @@ const dashboardMenus = [
           title: 'Danh sách người bán',
         },
       },
+      {
+        name: 'ListWebsite',
+        path: '/list-website',
+        component: '/dashboard/list-website/index',
+        meta: {
+          title: 'Danh sách website',
+        },
+      },
     ],
   },
 ];

@@ -85,6 +85,9 @@
               </a-button>
             </div>
           </template>
+          <template v-if="column?.render">
+            <component :is="column.render({ text: record[column.dataIndex], record })" />
+          </template>
         </template>
       </template>
     </Table>

@@ -108,16 +108,24 @@ export const mockWebsites: IWebsite[] = [
     url: 'https://nhadat24h.net',
   },
 ];
-// export const mockSellerWebsites: ISeller[] = [
-//   {
-//     ...mockSellers[0],
-//     website: mockWebsites[0]
-//   },
-//   {
-//     ...mockSellers[1],
-//     website: mockWebsites[1]
-//   }
-// ];
+export const mockSellerWebsites: ISeller[] = [
+  {
+    website: mockWebsites,
+    id: mockSellers[0]?.id ?? '',
+    name: mockSellers[0]?.name ?? '',
+    phone: mockSellers[0]?.phone ?? '',
+    email: mockSellers[0]?.email ?? '',
+    address: mockSellers[0]?.address ?? '',
+  },
+  {
+    website: mockWebsites,
+    id: mockSellers[1]?.id ?? '',
+    name: mockSellers[1]?.name ?? '',
+    phone: mockSellers[1]?.phone ?? '',
+    email: mockSellers[1]?.email ?? '',
+    address: mockSellers[1]?.address ?? '',
+  }
+];
 
 export const mockProperties: IProperty[] = [
   {
@@ -312,6 +320,33 @@ export const mockKeywordProperties: IKeywordProperty[] = [
     id: 'k2',
     name: 'Near School',
     property: mockPropertyTypes[1],
+  },
+];
+
+export const mockWebsiteSeller: IWebsite[] = [
+  {
+    id: 'w1',
+    name: 'BatDongSan.com.vn',
+    url: 'https://batdongsan.com.vn',
+    seller: mockSellers,
+  },
+  {
+    id: 'w2',
+    name: 'Nhadat24h.net',
+    url: 'https://nhadat24h.net',
+    seller: mockSellers,
+  },
+  {
+    id: 'w3',
+    name: 'BatDongSan.com.vn',
+    url: 'https://batdongsan.com.vn',
+    seller: mockSellers,
+  },
+  {
+    id: 'w4',
+    name: 'Nhadat24h.net',
+    url: 'https://nhadat24h.net',
+    seller: mockSellers,
   },
 ];
 

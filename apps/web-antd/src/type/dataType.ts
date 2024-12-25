@@ -57,12 +57,12 @@ export interface ISeller {
   phone: string;
   email: string;
   address: string;
-  website?: IWebsite;
+  website?: IWebsite[];
 }
 
 export interface IWebsite {
   id: string;
   name: string;
   url: string;
-  seller?: ISeller;
+  seller?: ISeller[];
 }

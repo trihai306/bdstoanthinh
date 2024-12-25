@@ -4,7 +4,7 @@ import { Modal } from 'ant-design-vue';
 import type { TablePaginationConfig } from 'ant-design-vue';
 import CommonTable from '#/components/commons/CommonTable.vue';
 import type { TableColumnTypeDynamic } from '#/type/tableType';
-import { mockSellerWebsites, mockWebsites } from '#/mocdata';
+import { mockSellers, mockWebsites, mockWebsiteSeller } from '#/mocdata';
 import type { ISeller, IWebsite } from '#/type/dataType';
 import { useRouter } from 'vue-router';
 import { h } from 'vue';
@@ -20,63 +20,35 @@ const handleTableChange = (pagination: TablePaginationConfig) => {
   console.log(pagination);
 };
 
-const handleSellerClick = (id: string) => {
-  router.push(`/workspace?sellerId=${id}`);
-};
-
 const columns: TableColumnTypeDynamic[] = [
   {
-    title: 'Tên người bán',
+    title: 'Tên website',
     dataIndex: 'name',
     isEditable: true,
     inputType: 'input',
-    customCell: (record) => {
-      return {
-        onClick: () => handleSellerClick(record.id),
-        style: 'cursor: pointer; color: #006be6;',
-      };
-    },
   },
   {
-    title: 'Số điện thoại',
-    dataIndex: 'phone',
-    isEditable: true,
-    inputType: 'input',
-  },
-  {
-    title: 'Email',
-    dataIndex: 'email',
-    isEditable: true,
-    inputType: 'input',
-  },
-  {
-    title: 'Địa chỉ',
-    dataIndex: 'address',
-    isEditable: true,
-    inputType: 'input',
-  },
-  {
-    title: 'Website',
-    dataIndex: 'website',
+    title: 'Người bán',
+    dataIndex: 'seller',
     isEditable: true,
     inputType: 'select',
-    options: mockWebsites.map((website) => ({
-      label: website.name,
-      value: website.id,
+    options: mockSellers.map((seller) => ({
+      label: seller.name,
+      value: seller.id,
     })),
     render: (opt) => {
       console.log('opt: ', opt);
       return h('div', { class: 'flex flex-wrap gap-2' }, [
-        opt.text?.map((website: IWebsite) => h('a', { key: website.id }, website.name)),
+        opt.text?.map((seller: ISeller) => h('a', { key: seller.id, href: `/workspace?sellerId=${seller.id}` }, seller.name)),
       ]);
     },
   },
   { title: 'Thao tác', dataIndex: 'action' },
 ];
 
-const dataSource = ref<ISeller[]>(mockSellerWebsites);
+const dataSource = ref<IWebsite[]>(mockWebsiteSeller);
 
-const editableData = reactive<Record<string, ISeller>>({});
+const editableData = reactive<Record<string, IWebsite>>({});
 
 const loading = ref(false);
 const pagination = reactive({
@@ -85,7 +57,7 @@ const pagination = reactive({
   pageSize: 10,
 });
 
-const handleEdit = (record: ISeller) => {
+const handleEdit = (record: IWebsite) => {
   editableData[record.id] = { ...record };
   const index = dataSource.value.findIndex((item) => item.id === record.id);
   if (index !== -1) {
@@ -118,7 +90,7 @@ const handleDelete = (ids: string[]) => {
     },
   });
 };
-const handleAdd = (newData: ISeller) => {
+const handleAdd = (newData: IWebsite) => {
   try {
     loading.value = true;
     // Sau này sẽ gọi API tại đây
@@ -157,14 +129,14 @@ const handleAdd = (newData: ISeller) => {
 <template>
   <div class="new-page">
     <CommonTable
-      :title="'Danh sách người bán'"
+      :title="'Danh sách website'"
       :columns="columns as TableColumnTypeDynamic[]"
       :data-source="dataSource"
       :loading="loading"
       :pagination="pagination"
       v-model:selected-row-keys="selectedRowKeys"
-      @edit="(record: ISeller) => handleEdit(record)"
-      @add="(record: ISeller) => handleAdd(record)"
+      @edit="(record: IWebsite) => handleEdit(record as IWebsite)"
+      @add="(record: IWebsite) => handleAdd(record as IWebsite)"
       @delete="handleDelete"
       @change="handleTableChange"
       @select="onSelectChange"
