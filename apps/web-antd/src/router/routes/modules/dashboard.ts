@@ -51,6 +51,15 @@ const routes: RouteRecordRaw[] = [
           title: 'Thông tin chi tiết tài sản',
         },
       },
+      {
+        name: 'ListSeller',
+        path: '/list-seller',
+        component: () => import('#/views/dashboard/list-seller/index.vue'),
+        meta: {
+          icon: 'lucide:building',
+          title: 'Danh sách người bán',
+        },
+      },
     ],
   },
 ];

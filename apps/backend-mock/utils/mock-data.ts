@@ -92,6 +92,14 @@ const dashboardMenus = [
           title: 'Thông tin chi tiết tài sản',
         },
       },
+      {
+        name: 'ListSeller',
+        path: '/list-seller',
+        component: '/dashboard/list-seller/index',
+        meta: {
+          title: 'Danh sách người bán',
+        },
+      },
     ],
   },
 ];
