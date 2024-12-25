@@ -1,7 +1,13 @@
-import type { TableColumnType } from 'ant-design-vue';
 import type { ColumnType } from 'ant-design-vue/es/table';
+import type { ColumnType as RcColumnType } from 'ant-design-vue/es/vc-table/interface';
 
-export type InputTypeOptions = 'input' | 'select' | 'date' | 'textarea' | 'number' | 'switch';
+export type InputTypeOptions =
+  | 'input'
+  | 'select'
+  | 'date'
+  | 'textarea'
+  | 'number'
+  | 'switch';
 
 export interface SelectOption {
   label: string;
@@ -11,12 +17,17 @@ export interface SelectOption {
 }
 
 // Extend từ TableColumnType và thêm các properties mới
-export interface TableColumnTypeDynamic<T = any> extends TableColumnType<T> , ColumnType<T> {
+type TableDynamic = {
   inputType?: InputTypeOptions;
   options?: SelectOption[];
   required?: boolean;
   placeholder?: string;
   rules?: any[]; // Validation rules
   hidden?: boolean; // Ẩn trường trong form
-  dependencies?: string[]; 
-}
+  dependencies?: string[];
+  isEditable?: boolean;
+};
+
+// Thêm DefaultRecordType để có thể sử dụng render
+export type TableColumnTypeDynamic<RecordType = any> =
+  RcColumnType<RecordType> & ColumnType<RecordType> & TableDynamic;

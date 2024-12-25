@@ -4,18 +4,14 @@ import { Modal } from 'ant-design-vue';
 import type { TablePaginationConfig } from 'ant-design-vue';
 import CommonTable from '#/components/commons/CommonTable.vue';
 import type { TableColumnTypeDynamic } from '#/type/tableType';
-import {
-  mockProperties,
-  mockPropertyTypes,
-  mockSellers,
-  mockWebsites,
-} from '#/mocdata';
-import type { IProperty } from '#/type/dataType';
+import { mockSellers } from '#/mocdata';
+import type { ISeller } from '#/type/dataType';
+import { useRouter } from 'vue-router';
 
 // Thêm state cho selected rows
 const selectedRowKeys = ref<string[]>([]);
 const isDeleteModalVisible = ref(false);
-
+const router = useRouter();
 const onSelectChange = (newSelectedRowKeys: string[]) => {
   selectedRowKeys.value = newSelectedRowKeys;
   console.log('newSelectedRowKeys: ', newSelectedRowKeys);
@@ -24,106 +20,47 @@ const handleTableChange = (pagination: TablePaginationConfig) => {
   console.log(pagination);
 };
 
+const handleSellerClick = (id: string) => {
+  router.push(`/workspace?sellerId=${id}`);
+};
+
 const columns: TableColumnTypeDynamic[] = [
-  { title: 'Đường', dataIndex: 'street', isEditable: true, inputType: 'input' },
   {
-    title: 'Địa chỉ chi tiết',
-    dataIndex: 'detailAddress',
+    title: 'Tên người bán',
+    dataIndex: 'name',
+    isEditable: true,
+    inputType: 'input',
+    customCell: (record) => {
+      return {
+        onClick: () => handleSellerClick(record.id),
+        style: 'cursor: pointer; color: #006be6;',
+      };
+    },
+  },
+  {
+    title: 'Số điện thoại',
+    dataIndex: 'phone',
     isEditable: true,
     inputType: 'input',
   },
   {
-    title: 'Loại BĐS',
-    dataIndex: ['type', 'name'],
-    isEditable: true,
-    inputType: 'select',
-    options: mockPropertyTypes.map((type) => ({
-      label: type.name,
-      value: type.id,
-    })),
-  },
-  {
-    title: 'Diện tích (m²)',
-    dataIndex: 'acreage',
+    title: 'Email',
+    dataIndex: 'email',
     isEditable: true,
     inputType: 'input',
   },
   {
-    title: 'Chiều dài (m)',
-    dataIndex: 'length',
-    isEditable: true,
-    inputType: 'input',
-  },
-  {
-    title: 'Chiều rộng (m)',
-    dataIndex: 'width',
-    isEditable: true,
-    inputType: 'input',
-  },
-  {
-    title: 'Số tầng',
-    dataIndex: 'floors',
-    isEditable: true,
-    inputType: 'input',
-  },
-  {
-    title: 'Năm xây dựng',
-    dataIndex: 'constructionYear',
-    isEditable: true,
-    inputType: 'input',
-  },
-  {
-    title: 'Diện tích xây dựng (m²)',
-    dataIndex: 'constructionMeter',
-    isEditable: true,
-    inputType: 'input',
-  },
-  {
-    title: 'Giá (VNĐ)',
-    dataIndex: 'price',
-    isEditable: true,
-    inputType: 'input',
-  },
-  {
-    title: 'Giá/m²',
-    dataIndex: 'metPrice',
-    isEditable: true,
-    inputType: 'input',
-  },
-  {
-    title: 'Loại tiền',
-    dataIndex: 'typePrice',
-    isEditable: true,
-    inputType: 'select',
-  },
-  {
-    title: 'Người bán',
-    dataIndex: ['seller', 'name'],
-    inputType: 'select',
-    isEditable: false,
-    options: mockSellers.map((seller) => ({
-      label: seller.name,
-      value: seller.id,
-    })),
-  },
-  {
-    title: 'Website',
-    dataIndex: ['web', 'name'],
-    inputType: 'select',
-    options: mockWebsites.map((web) => ({ label: web.name, value: web.id })),
-  },
-  {
-    title: 'Phường/Xã',
-    dataIndex: 'ward',
+    title: 'Địa chỉ',
+    dataIndex: 'address',
     isEditable: true,
     inputType: 'input',
   },
   { title: 'Thao tác', dataIndex: 'action' },
 ];
 
-const dataSource = ref<IProperty[]>(mockProperties);
+const dataSource = ref<ISeller[]>(mockSellers);
 
-const editableData = reactive<Record<string, IProperty>>({});
+const editableData = reactive<Record<string, ISeller>>({});
 
 const loading = ref(false);
 const pagination = reactive({
@@ -132,7 +69,7 @@ const pagination = reactive({
   pageSize: 10,
 });
 
-const handleEdit = (record: IProperty) => {
+const handleEdit = (record: ISeller) => {
   editableData[record.id] = { ...record };
   const index = dataSource.value.findIndex((item) => item.id === record.id);
   if (index !== -1) {
@@ -165,7 +102,7 @@ const handleDelete = (ids: string[]) => {
     },
   });
 };
-const handleAdd = (newData: IProperty) => {
+const handleAdd = (newData: ISeller) => {
   try {
     loading.value = true;
     // Sau này sẽ gọi API tại đây
@@ -176,9 +113,13 @@ const handleAdd = (newData: IProperty) => {
       ...newData,
       id: (dataSource.value.length + 1).toString(),
     };
+    // Ensure finalRow conforms to the expected type before adding it to dataSource
+    const formattedFinalRow = {
+      ...finalRow,
+    };
     dataSource.value = [
       ...dataSource.value.filter((item) => !item.id.startsWith('new-')),
-      finalRow,
+      formattedFinalRow,
     ];
 
     Modal.success({
@@ -200,14 +141,14 @@ const handleAdd = (newData: IProperty) => {
 <template>
   <div class="new-page">
     <CommonTable
-      :title="'Danh sách Bất động sản'"
+      :title="'Danh sách người bán'"
       :columns="columns as TableColumnTypeDynamic[]"
       :data-source="dataSource"
       :loading="loading"
       :pagination="pagination"
       v-model:selected-row-keys="selectedRowKeys"
-      @edit="(record: IProperty) => handleEdit(record)"
-      @add="(record: IProperty) => handleAdd(record)"
+      @edit="(record: ISeller) => handleEdit(record)"
+      @add="(record: ISeller) => handleAdd(record)"
       @delete="handleDelete"
       @change="handleTableChange"
       @select="onSelectChange"

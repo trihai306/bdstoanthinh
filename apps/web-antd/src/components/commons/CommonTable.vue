@@ -1,10 +1,13 @@
 <template>
-  <div class="bg-white p-[24px]">
+  <div class="p-[24px]">
     <div class="flex items-center justify-between">
       <h1 class="mb-[24px] text-[24px] font-bold">{{ title }}</h1>
       <div class="flex gap-2">
         <Button type="primary" @click="handleAdd">Thêm mới</Button>
-        <Button type="primary" :disabled="!selectedRowKeys.length" @click="handleDelete(selectedRowKeys)"
+        <Button
+          type="primary"
+          :disabled="!selectedRowKeys.length"
+          @click="handleDelete(selectedRowKeys)"
           >Xoá ({{ selectedRowKeys.length }}) mục đã chọn</Button
         >
       </div>
@@ -21,27 +24,42 @@
       <template #bodyCell="{ column, record }">
         <template v-if="editableData[record.id]">
           <!-- Input thường -->
-          <Input
-            v-if="column.inputType === 'input'" 
-            v-model:value="editableData[record?.id as string][column.dataIndex as string]"
-            :placeholder="column.placeholder || `Nhập ${column.title}`"
-          />
-          <!-- Select -->
-          <Select
-            v-else-if="column.inputType === 'select'"
-            v-model:value="editableData[record.id as string][column.dataIndex as string]"
-            :placeholder="column.placeholder || `Chọn ${column.title}`"
-            :options="column.options"
-            style="width: 100%"
-          />
+          <template v-if="column.isEditable">
+            <Input
+              v-if="column.inputType === 'input'"
+              v-model:value="
+                editableData[record.id as string][column.dataIndex as string]
+              "
+              :placeholder="`Nhập ${column.title}`"
+            />
+            <!-- Select -->
+            <Select
+              v-else-if="column.inputType === 'select'"
+              v-model:value="
+                editableData[record.id as string][column.dataIndex as string]
+              "
+              :placeholder="column.placeholder || `Chọn ${column.title}`"
+              :options="column.options"
+              style="width: 100%"
+            />
+          </template>
           <!-- Cột action khi đang edit -->
           <template v-else-if="column.dataIndex === 'action'">
             <div class="action-buttons">
-              <a-button type="primary" size="small" @click="save(record.id)">
+              <a-button
+                type="primary"
+                class="cursor-pointer font-bold"
+                size="small"
+                @click="save(record.id)"
+              >
                 <!-- <VbenIcon :icon="'save" class="size-5" /> -->
                 Lưu
               </a-button>
-              <a-button size="small" @click="cancel(record.id)">
+              <a-button
+                size="small"
+                class="cursor-pointer font-bold"
+                @click="cancel(record.id)"
+              >
                 <!-- <VbenIcon :icon="'close'" class="size-5" /> -->
                 Hủy
               </a-button>
@@ -51,16 +69,21 @@
         <template v-else>
           <template v-if="column.dataIndex === 'action'">
             <div class="action-buttons">
-              <a-button size="small" @click="handleEdit(record as DataItem)" class="flex-center">
+              <a-button
+                size="small"
+                @click="handleEdit(record as DataItem)"
+                class="flex-center cursor-pointer"
+              >
                 <VbenIcon :icon="SvgEditIcon" class="size-5" />
               </a-button>
-              <a-button size="small" @click="handleDelete([record.id])">
+              <a-button
+                size="small"
+                class="flex-center cursor-pointer"
+                @click="handleDelete([record.id])"
+              >
                 <VbenIcon :icon="SvgDeleteIcon" class="size-5" />
               </a-button>
             </div>
-          </template>
-          <template v-else>
-            {{ record[column.dataIndex as string] }}
           </template>
         </template>
       </template>
@@ -101,12 +124,12 @@ interface Props {
 }
 
 interface Emits {
-  (e: 'edit', record: DataItem): void;
+  (e: 'edit', record: any): void;
   (e: 'delete', ids: string[]): void;
-  (e: 'add', record: DataItem): void;
+  (e: 'add', record: any): void;
   (e: 'select', ids: string[]): void;
   (e: 'change', pagination: TablePaginationConfig): void;
-  (e: 'update:dataSource', dataSource: DataItem[]): void;
+  (e: 'update:dataSource', dataSource: any[]): void;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -120,8 +143,6 @@ const props = withDefaults(defineProps<Props>(), {
   }),
 });
 
-
-
 const emit = defineEmits<Emits>();
 
 const handleEdit = (record: DataItem) => {
@@ -129,7 +150,7 @@ const handleEdit = (record: DataItem) => {
   if (Object.keys(editableData).length > 0) {
     Modal.warning({
       title: 'Cảnh báo',
-      content: 'Vui lòng hoàn thành chỉnh sửa hiện tại trước khi sửa mục khác'
+      content: 'Vui lòng hoàn thành chỉnh sửa hiện tại trước khi sửa mục khác',
     });
     return;
   }
@@ -155,7 +176,7 @@ const handleAdd = () => {
 
   // Thêm vào đầu dataSource
   props.dataSource.unshift(newRow);
-  
+
   // Đưa hàng vào trạng thái edit
   editableData[newid] = { ...newRow };
 };
@@ -169,7 +190,11 @@ const rowSelection = ref({
   onSelect: (record: DataItem, selected: boolean, selectedRows: DataItem[]) => {
     console.log(record, selected, selectedRows);
   },
-  onSelectAll: (selected: boolean, selectedRows: DataItem[], changeRows: DataItem[]) => {
+  onSelectAll: (
+    selected: boolean,
+    selectedRows: DataItem[],
+    changeRows: DataItem[],
+  ) => {
     console.log(selected, selectedRows, changeRows);
   },
 });
@@ -198,7 +223,7 @@ const save = (id: string) => {
 const cancel = (id: string) => {
   // Nếu là hàng mới thêm, xóa khỏi dataSource
   if (id.startsWith('new-')) {
-    const index = props.dataSource.findIndex(item => item.id === id);
+    const index = props.dataSource.findIndex((item) => item.id === id);
     if (index !== -1) {
       props.dataSource.splice(index, 1);
     }

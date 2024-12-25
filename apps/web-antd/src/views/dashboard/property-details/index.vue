@@ -9,22 +9,11 @@
       v-model:selected-row-ids="selectedRowids"
       @edit="(record: DataItem) => handleEdit(record)"
       @add="(record: DataItem) => handleAdd(record)"
-      @delete="showDeleteConfirm"
+      @delete="handleDelete"
       @change="handleTableChange"
       @update:selected-row-ids="onSelectChange"
     />
   </div>
-  <a-modal
-    v-model:visible="isDeleteModalVisible"
-    title="Xác nhận xóa"
-    @ok="handleDelete"
-    @cancel="isDeleteModalVisible = false"
-    okText="Xóa"
-    cancelText="Hủy"
-    :okButtonProps="{ danger: true }"
-  >
-    <p>Bạn có chắc chắn muốn xóa {{ selectedRowids.length }} mục đã chọn?</p>
-  </a-modal>
 </template>
 
 <script setup lang="ts">
@@ -35,7 +24,6 @@ import CommonTable from '#/components/commons/CommonTable.vue';
 import type { TableColumnTypeDynamic } from '#/type/tableType';
 
 const ACommonTable = CommonTable;
-const AModal = Modal;
 
 interface DataItem {
   id: string;
@@ -125,26 +113,25 @@ const handleEdit = (record: DataItem) => {
   }
 };
 
-const showDeleteConfirm = (id: string[]) => {
-  if (id.length === 0) {
-    Modal.warning({
-      title: 'Cảnh báo',
-      content: 'Vui lòng chọn ít nhất một mục để xóa',
-    });
-    return;
-  }
-  selectedRowids.value = id;
-  isDeleteModalVisible.value = true;
-};
-
-const handleDelete = () => {
-  if (selectedRowids.value.length > 0) {
-    dataSource.value = dataSource.value.filter(
-      (item) => !selectedRowids.value.includes(item.id),
-    );
-    selectedRowids.value = [];
-    isDeleteModalVisible.value = false;
-  }
+const handleDelete = (ids: string[]) => {
+  Modal.confirm({
+    title: 'Xác nhận xóa',
+    content: 'Bạn có chắc chắn muốn xóa?',
+    onOk: () => {
+      if (ids.length > 0) {
+        dataSource.value = dataSource.value.filter(
+          (item) => !ids.includes(item.id),
+        );
+        ids = [];
+      } else if (selectedRowids.value.length > 0) {
+        dataSource.value = dataSource.value.filter(
+          (item) => !selectedRowids.value.includes(item.id),
+        );
+        selectedRowids.value = [];
+        isDeleteModalVisible.value = false;
+      }
+    },
+  });
 };
 const handleAdd = (newData: DataItem) => {
   try {
