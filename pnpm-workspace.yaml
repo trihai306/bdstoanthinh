@@ -153,7 +153,7 @@ catalog:
   stylelint-prettier: ^5.0.2
   stylelint-scss: ^6.10.0
   tailwind-merge: ^2.5.5
-  tailwindcss: ^3.4.16
+  tailwindcss: ^4.1.12
   tailwindcss-animate: ^1.0.7
   theme-colors: ^0.1.0
   turbo: ^2.3.3
